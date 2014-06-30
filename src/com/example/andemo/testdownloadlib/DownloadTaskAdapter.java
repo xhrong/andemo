@@ -107,7 +107,7 @@ public class DownloadTaskAdapter extends ArrayAdapter<DownloadTask> {
             public void onClick(View view) {
                 DownloadTask ddtask = (DownloadTask) holder.text.getTag();
                 // if(ddtask.getStatus()==DownloadTask.STATUS_FINISHED){//如果结束了，则重新下载
-                ddtask.setStatus(DownloadTask.STATUS_RESTART);
+             //   ddtask.setStatus(DownloadTask.STATUS_RESTART);
                 //  }
                 String customParam = "{\"fileType\":\"zip\"}";
                 ddtask.setCustomParam(customParam);

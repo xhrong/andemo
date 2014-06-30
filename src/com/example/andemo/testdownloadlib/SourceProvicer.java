@@ -35,8 +35,8 @@ public class SourceProvicer {
         task3.setId(DownloadManager.getInstance().getConfig().getCreator().createId(task3));
         ddList.add(task3);
         DownloadTask task4 = new DownloadTask();
-        task4.setName("PDF");
-        task4.setUrl("https://bitcoin.org/bitcoin.pdf");
+        task4.setName("MTBK");
+        task4.setUrl("http://download.cycore.cn/7/files/7581145211124ff286bd2814e8840cd1.mtbk");
         task4.setDownloadSavePath("/mnt/sdcard/");
         task4.setId(DownloadManager.getInstance().getConfig().getCreator().createId(task4));
         ddList.add(task4);

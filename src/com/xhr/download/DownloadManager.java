@@ -106,6 +106,18 @@ public class DownloadManager {
 
         Log.v(TAG, "addDownloadTask: " + task.getName());
 
+
+        //查询是否有下载记录
+        DownloadTask historyTask = provider.findDownloadTaskById(task.getId());
+        if(historyTask == null) {
+            provider.saveDownloadTask(task);
+        } else {
+            task.setDownloadFinishedSize(historyTask.getDownloadFinishedSize());
+            task.setDownloadTotalSize(historyTask.getDownloadTotalSize());
+
+            provider.updateDownloadTask(task);
+        }
+
         DownloadOperator operator = new DownloadOperator(this, task);
         taskOperators.put(task, operator);
         if(listener != null) {
@@ -113,13 +125,6 @@ public class DownloadManager {
         }
 
         task.setStatus(DownloadTask.STATUS_PENDDING);
-        //查询是否有下载记录
-        DownloadTask historyTask = provider.findDownloadTaskById(task.getId());
-        if(historyTask == null) {
-            provider.saveDownloadTask(task);
-        } else {
-            provider.updateDownloadTask(task);
-        }
         pool.submit(operator);
     }
 

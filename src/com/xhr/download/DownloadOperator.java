@@ -1,6 +1,7 @@
 package com.xhr.download;
 
 import android.text.TextUtils;
+import android.util.Log;
 import com.xhr.download.util.FileUtil;
 import com.xhr.download.util.StringUtil;
 
@@ -167,6 +168,7 @@ public class DownloadOperator implements Runnable {
         conn.setReadTimeout(30000);
         conn.setUseCaches(true);
         if (task.getDownloadFinishedSize() != 0) {
+            Log.i("Range", "" + task.getDownloadFinishedSize());
             conn.setRequestProperty("Range", "bytes=" + task.getDownloadFinishedSize() + "-");
         }
 
