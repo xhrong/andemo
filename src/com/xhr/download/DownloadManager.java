@@ -21,14 +21,6 @@ public class DownloadManager {
 
     private static final String TAG = "DownloadManager";
 
-    //	static {
-    //		if(Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-    //			DOWNLOAD_DIR = Env.ROOT_DIR + File.separator + "download";
-    //		} else {
-    //			DOWNLOAD_DIR = Environment.getDataDirectory() + File.separator + "com.huaqian" + File.separator + "databases";
-    //		}
-    //	}
-
     private static DownloadManager instance;
 
     private DownloadConfig config;
