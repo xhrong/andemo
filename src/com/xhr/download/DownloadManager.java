@@ -73,17 +73,39 @@ public class DownloadManager {
         this.config = config;
     }
 
+    /**
+     * 添加下载任务
+     * @param task
+     */
     public void addDownloadTask(DownloadTask task) {
         addDownloadTask(task, null);
     }
 
+    /**
+     * 添加下载任务
+     * @param task
+     * @param listener  任务监听器
+     */
     public void addDownloadTask(DownloadTask task, DownloadListener listener) {
+        //如果没有下载地下载，就不要添加任务了
         if(TextUtils.isEmpty(task.getUrl())) {
             throw new IllegalArgumentException("task's url cannot be empty");
         }
+        //如果没有任务id，就不要下载了，让用户自行添加任务id，有利于用户管理下载任务
+        if(TextUtils.isEmpty(task.getId())){
+            throw new IllegalArgumentException("task's id cannot be empty");
+        }
+        //如果这个任务已经存在了，就不要添加了
         if(taskOperators.containsKey(task)) {
             return ;
         }
+         //如果是重新下载 ，则将已下载数据量置0，注：在下载过程中，不能重新下载
+        if(task.getStatus()==DownloadTask.STATUS_RESTART){
+            task.setDownloadFinishedSize(0);
+        }
+
+        Log.v(TAG, "addDownloadTask: " + task.getName());
+
         DownloadOperator operator = new DownloadOperator(this, task);
         taskOperators.put(task, operator);
         if(listener != null) {
@@ -91,9 +113,9 @@ public class DownloadManager {
         }
 
         task.setStatus(DownloadTask.STATUS_PENDDING);
+        //查询是否有下载记录
         DownloadTask historyTask = provider.findDownloadTaskById(task.getId());
         if(historyTask == null) {
-            task.setId(config.getCreator().createId(task));
             provider.saveDownloadTask(task);
         } else {
             provider.updateDownloadTask(task);
@@ -101,30 +123,42 @@ public class DownloadManager {
         pool.submit(operator);
     }
 
+    /**
+     * 获取任务的监听器
+     * @param task
+     * @return
+     */
     public DownloadListener getDownloadListenerForTask(DownloadTask task) {
         if(task == null) {
             return null;
         }
-
         return taskListeners.get(task);
     }
 
+    /**
+     * 更新任务监听器
+     * @param task
+     * @param listener
+     */
     public void updateDownloadTaskListener(DownloadTask task, DownloadListener listener) {
         Log.v(TAG, "try to updateDownloadTaskListener");
         if(task == null || !taskOperators.containsKey(task)) {
             return ;
         }
-
         Log.v(TAG, "updateDownloadTaskListener");
+        //HashMap，会直接替换掉对就的值
         taskListeners.put(task, listener);
     }
 
+    /**
+     * 移除任务监听器
+     * @param task
+     */
     public void removeDownloadTaskListener(DownloadTask task) {
         Log.v(TAG, "try to removeDownloadTaskListener");
         if(task == null || !taskListeners.containsKey(task)) {
             return ;
         }
-
         Log.v(TAG, "removeDownloadTaskListener");
         taskListeners.remove(task);
     }
@@ -203,6 +237,12 @@ public class DownloadManager {
         });
     }
 
+    /**
+     * 更新任务状态
+     * @param task
+     * @param finishedSize  已经下载大小
+     * @param trafficSpeed  下载速度
+     */
     void updateDownloadTask(final DownloadTask task, final long finishedSize, final long trafficSpeed) {
         task.setStatus(DownloadTask.STATUS_RUNNING);
         final DownloadListener listener = taskListeners.get(task);
@@ -331,7 +371,6 @@ public class DownloadManager {
     private void removeTask(DownloadTask task) {
         taskOperators.remove(task);
         taskListeners.remove(task);
-        provider.deleteDownloadTask(task);
     }
 
 }

@@ -5,6 +5,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
 import android.util.Log;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
@@ -64,7 +66,8 @@ public class SqlLiteDownloadProvider implements DownloadProvider {
         buffer.append("`").append(DownloadTask.NAME).append("` VARCHAR,");
         buffer.append("`").append(DownloadTask.FINISHEDSIZE).append("` LONG,");
         buffer.append("`").append(DownloadTask.TOTALSIZE).append("` LONG,");
-        buffer.append("`").append(DownloadTask.STATUS).append("` int");
+        buffer.append("`").append(DownloadTask.STATUS).append("` int,");
+        buffer.append("`").append(DownloadTask.CUSTOMPARAM).append("` VARCHAR");
         buffer.append(")");
         db.execSQL(buffer.toString());
     }
@@ -81,14 +84,14 @@ public class SqlLiteDownloadProvider implements DownloadProvider {
     public void updateDownloadTask(DownloadTask task) {
         ContentValues values = createDownloadTaskValues(task);
         db.update(DOWNLOAD_TABLE, values, DownloadTask.ID + "=?", new String[]{task.getId()});
-   //     printDb();
+        //     printDb();
         notifyDownloadStatusChanged(task);
     }
 
-    public void deleteDownloadTask(DownloadTask task) {
-        db.delete(DOWNLOAD_TABLE, DownloadTask.ID + "=?", new String[]{task.getId()});
-        notifyDownloadStatusChanged(task);
-    }
+//    public void deleteDownloadTask(DownloadTask task) {
+//        db.delete(DOWNLOAD_TABLE, DownloadTask.ID + "=?", new String[]{task.getId()});
+//        notifyDownloadStatusChanged(task);
+//    }
 
     public DownloadTask findDownloadTaskById(String id) {
         if (TextUtils.isEmpty(id)) {
@@ -120,10 +123,10 @@ public class SqlLiteDownloadProvider implements DownloadProvider {
     }
 
 
-    private void printDb(){
-        List<DownloadTask> list=getAllDownloadTask();
-        for(int i=0;i<list.size();i++){
-          Log.i("DataContent", list.get(i).toString());
+    private void printDb() {
+        List<DownloadTask> list = getAllDownloadTask();
+        for (int i = 0; i < list.size(); i++) {
+            Log.i("DataContent", list.get(i).toString());
         }
     }
 
@@ -149,7 +152,7 @@ public class SqlLiteDownloadProvider implements DownloadProvider {
         values.put(DownloadTask.TOTALSIZE, task.getDownloadTotalSize());
         values.put(DownloadTask.NAME, task.getName());
         values.put(DownloadTask.STATUS, task.getStatus());
-
+        values.put(DownloadTask.CUSTOMPARAM, task.getCustomParam());
         return values;
     }
 
@@ -163,6 +166,8 @@ public class SqlLiteDownloadProvider implements DownloadProvider {
         task.setDownloadFinishedSize(cursor.getLong(cursor.getColumnIndex(DownloadTask.FINISHEDSIZE)));
         task.setDownloadTotalSize(cursor.getLong(cursor.getColumnIndex(DownloadTask.TOTALSIZE)));
         task.setStatus(cursor.getInt(cursor.getColumnIndex(DownloadTask.STATUS)));
+        task.setCustomParam(cursor.getString(cursor.getColumnIndex(DownloadTask.CUSTOMPARAM)));
+
         return task;
     }
 }

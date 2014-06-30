@@ -38,15 +38,15 @@ public class DownloadOperator implements Runnable {
     }
 
     void pauseDownload() {
-        if(pauseFlag) {
-            return ;
+        if (pauseFlag) {
+            return;
         }
         pauseFlag = true;
     }
 
     void resumeDownload() {
-        if(!pauseFlag) {
-            return ;
+        if (!pauseFlag) {
+            return;
         }
         pauseFlag = false;
         synchronized (this) {
@@ -72,10 +72,10 @@ public class DownloadOperator implements Runnable {
                 conn.connect();
 
                 task.setDownloadSavePath(filePath);
-                if(task.getDownloadTotalSize() == 0) {
+                if (task.getDownloadTotalSize() == 0) {
                     task.setDownloadTotalSize(conn.getContentLength());
                 }
-                if(TextUtils.isEmpty(task.getMimeType())) {
+                if (TextUtils.isEmpty(task.getMimeType())) {
                     task.setMimeType(conn.getContentType());
                 }
                 task.setStatus(DownloadTask.STATUS_RUNNING);
@@ -89,8 +89,8 @@ public class DownloadOperator implements Runnable {
                 long total = task.getDownloadFinishedSize();
                 long prevTime = System.currentTimeMillis();
                 long achieveSize = total;
-                while(!stopFlag && (count = is.read(buffer)) != -1) {
-                    while(pauseFlag) {
+                while (!stopFlag && (count = is.read(buffer)) != -1) {
+                    while (pauseFlag) {
                         manager.onDownloadPaused(task);
                         synchronized (this) {
                             try {
@@ -106,7 +106,7 @@ public class DownloadOperator implements Runnable {
                     total += count;
 
                     long tempSize = total - achieveSize;
-                    if(tempSize > REFRESH_INTEVAL_SIZE) {
+                    if (tempSize > REFRESH_INTEVAL_SIZE) {
                         long tempTime = System.currentTimeMillis() - prevTime;
                         long speed = tempSize * 1000 / tempTime;
                         achieveSize = total;
@@ -118,7 +118,7 @@ public class DownloadOperator implements Runnable {
                 }
                 task.setDownloadFinishedSize(total);
 
-                if(stopFlag) {
+                if (stopFlag) {
                     manager.onDownloadCanceled(task);
                 } else {
                     manager.onDownloadSuccessed(task);
@@ -126,35 +126,35 @@ public class DownloadOperator implements Runnable {
                 break;
             } catch (IOException e) {
                 e.printStackTrace();
-                if(tryTimes > manager.getConfig().getRetryTime()) {
+                if (tryTimes > manager.getConfig().getRetryTime()) {
                     manager.onDownloadFailed(task);
                     break;
                 } else {
-                    tryTimes ++;
+                    tryTimes++;
                     continue;
                 }
             }
-        } while(true);
+        } while (true);
     }
 
     private RandomAccessFile buildDownloadFile() throws IOException {
         String fileName = FileUtil.getFileNameByUrl(task.getUrl());
         //优先使用任务中设定的文件保存路径，如果没有，则用默认路径
-        String fileSavePath=task.getDownloadSavePath();
-        File file=new File(fileSavePath);
-        if(file.isDirectory()){
-            file=new File(fileSavePath,fileName);
-        }else if(file.isFile()){
+        String fileSavePath = task.getDownloadSavePath();
+        File file = new File(fileSavePath);
+        if (file.isDirectory()) {
+            file = new File(fileSavePath, fileName);
+        } else if (file.isFile()) {
             //不用处理
-        }else{
+        } else {
             file = new File(manager.getConfig().getDownloadSavePath(), fileName);
         }
-        if(!file.getParentFile().isDirectory() && !file.getParentFile().mkdirs()) {
+        if (!file.getParentFile().isDirectory() && !file.getParentFile().mkdirs()) {
             throw new IOException("cannot create download folder");
         }
         filePath = file.getAbsolutePath();
         RandomAccessFile raf = new RandomAccessFile(file, "rw");
-        if(task.getDownloadFinishedSize() != 0) {
+        if (task.getDownloadFinishedSize() != 0) {
             raf.seek(task.getDownloadFinishedSize());
         }
 
@@ -166,7 +166,7 @@ public class DownloadOperator implements Runnable {
         conn.setConnectTimeout(30000);
         conn.setReadTimeout(30000);
         conn.setUseCaches(true);
-        if(task.getDownloadFinishedSize() != 0) {
+        if (task.getDownloadFinishedSize() != 0) {
             conn.setRequestProperty("Range", "bytes=" + task.getDownloadFinishedSize() + "-");
         }
 

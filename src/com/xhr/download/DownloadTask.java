@@ -1,5 +1,7 @@
 package com.xhr.download;
 
+import org.json.JSONObject;
+
 /**
  * Created by xhrong on 2014/6/28.
  */
@@ -13,37 +15,30 @@ public class DownloadTask {
     public static final String TOTALSIZE = "e";
     public static final String NAME = "f";
     public static final String STATUS = "g";
+    public static final String  CUSTOMPARAM="f";
 
     public static final int STATUS_PENDDING = 1 << 0;
-
     public static final int STATUS_RUNNING = 1 << 1;
-
     public static final int STATUS_PAUSED = 1 << 2;
-
     public static final int STATUS_CANCELED = 1 << 3;
-
     public static final int STATUS_FINISHED = 1 << 4;
-
     public static final int STATUS_ERROR = 1 << 5;
+    public static final int STATUS_RESTART = 1 << 6;
 
     private String id;
-
     private String name;
-
     private String url;
-
     private String mimeType;
-
     private String downloadSavePath;
-
     private long downloadFinishedSize;
-
     private long downloadTotalSize;
+    private int status;
+
+    private String customParam;//用户自定义参数，方便用户控制
 
     // @Transparent no need to persist
     private long downloadSpeed;
 
-    private int status;
 
     public DownloadTask() {
         downloadFinishedSize = 0;
@@ -53,14 +48,14 @@ public class DownloadTask {
 
     @Override
     public boolean equals(Object o) {
-        if(o == null) {
+        if (o == null) {
             return false;
         }
-        if(!(o instanceof DownloadTask)) {
+        if (!(o instanceof DownloadTask)) {
             return false;
         }
         DownloadTask task = (DownloadTask) o;
-        if(this.name == null || this.downloadSavePath == null) {
+        if (this.name == null || this.downloadSavePath == null) {
             return this.url.equals(task.url);
         }
         return this.name.equals(task.name) && this.url.equals(task.url) && this.downloadSavePath.equals(task.downloadSavePath);
@@ -145,10 +140,17 @@ public class DownloadTask {
         this.status = status;
     }
 
+    public String getCustomParam() {
+        return customParam;
+    }
+
+    public void setCustomParam(String customParam) {
+        this.customParam = customParam;
+    }
 
     @Override
-    public String toString(){
-        String str="ID:"+this.getId()+"\n";
+    public String toString() {
+        String str = "ID:" + this.getId() + "\n";
         return str;
     }
 }

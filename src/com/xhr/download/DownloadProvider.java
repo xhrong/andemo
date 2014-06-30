@@ -11,7 +11,7 @@ public interface DownloadProvider {
 
     public void updateDownloadTask(DownloadTask task);
 
-    public void deleteDownloadTask(DownloadTask task);
+  //  public void deleteDownloadTask(DownloadTask task);
 
     public DownloadTask findDownloadTaskById(String id);
 

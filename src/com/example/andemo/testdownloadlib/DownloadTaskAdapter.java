@@ -15,6 +15,8 @@ import com.example.andemo.R;
 import com.xhr.download.DownloadListener;
 import com.xhr.download.DownloadManager;
 import com.xhr.download.DownloadTask;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -76,7 +78,7 @@ public class DownloadTaskAdapter extends ArrayAdapter<DownloadTask> {
             viewHolder.pauseBtn = (Button) rowView.findViewById(R.id.btnPause);
             viewHolder.resumeBtn = (Button) rowView.findViewById(R.id.btnResume);
             viewHolder.pBar = (ProgressBar) rowView.findViewById(R.id.progressBar);
-             viewHolder.text.setTag(ddt);
+            viewHolder.text.setTag(ddt);
             rowView.setTag(viewHolder);
         }
 
@@ -88,14 +90,14 @@ public class DownloadTaskAdapter extends ArrayAdapter<DownloadTask> {
         holder.pauseBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DownloadTask ddtask=(DownloadTask)holder.text.getTag();
+                DownloadTask ddtask = (DownloadTask) holder.text.getTag();
                 DownloadManager.getInstance().pauseDownload(ddtask);
             }
         });
         holder.resumeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DownloadTask ddtask=(DownloadTask)holder.text.getTag();
+                DownloadTask ddtask = (DownloadTask) holder.text.getTag();
                 DownloadManager.getInstance().resumeDownload(ddtask);
             }
         });
@@ -103,24 +105,24 @@ public class DownloadTaskAdapter extends ArrayAdapter<DownloadTask> {
         holder.startBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DownloadTask ddtask=(DownloadTask)holder.text.getTag();
-                DownloadTask task=new DownloadTask();
-                task.setId(ddtask.getId());
-                task.setName(ddtask.getName());
-                task.setDownloadSavePath(ddtask.getDownloadSavePath());
-                task.setUrl(ddtask.getUrl());
-                DownloadManager.getInstance().addDownloadTask(task,new DownloadListener(){
+                DownloadTask ddtask = (DownloadTask) holder.text.getTag();
+                // if(ddtask.getStatus()==DownloadTask.STATUS_FINISHED){//如果结束了，则重新下载
+                ddtask.setStatus(DownloadTask.STATUS_RESTART);
+                //  }
+                String customParam = "{\"fileType\":\"zip\"}";
+                ddtask.setCustomParam(customParam);
+                DownloadManager.getInstance().addDownloadTask(ddtask, new DownloadListener() {
 
                     @Override
                     public void onDownloadStart(DownloadTask task) {
                         holder.pBar.setProgress(0);
-                        holder.text.setText(task.getName()+" Started");
+                        holder.text.setText(task.getName() + " Started");
                     }
 
                     @Override
                     public void onDownloadUpdated(DownloadTask task, long finishedSize, long trafficSpeed) {
-                        holder.text.setText(task.getName()+ finishedSize);
-                        holder.pBar.setProgress((int)(finishedSize*100/task.getDownloadTotalSize()));
+                        holder.text.setText(task.getName() + finishedSize);
+                        holder.pBar.setProgress((int) (finishedSize * 100 / task.getDownloadTotalSize()));
                     }
 
                     @Override
@@ -135,8 +137,18 @@ public class DownloadTaskAdapter extends ArrayAdapter<DownloadTask> {
 
                     @Override
                     public void onDownloadSuccessed(DownloadTask task) {
-                        holder.text.setText(task.getName()+ "finish");
+                        holder.text.setText(task.getName() + "finish");
                         holder.pBar.setProgress(100);
+                        JSONObject jsonObject;
+                        try{
+                            jsonObject=new JSONObject(task.getCustomParam());
+                            if(jsonObject.getString("fileType").equals("zip")){
+                                Log.i("FileTypt","可以解ZIP了");
+                            }
+                        }catch (JSONException e){
+                            e.printStackTrace();
+                        }
+
                     }
 
                     @Override
