@@ -1,6 +1,7 @@
 package com.xhr.download;
 
 import android.content.Context;
+import android.os.Environment;
 
 import java.io.File;
 
@@ -20,7 +21,7 @@ public class DownloadConfig {
     private DownloadTaskIDCreator creator;
 
     private DownloadConfig() {
-        downloadSavePath = Env.ROOT_DIR + File.separator + "download";
+        downloadSavePath = Environment.getExternalStorageDirectory().getPath() + File.separator + "xhrong" + File.separator + "download";
         maxDownloadThread = 2;
         retryTime = 2;
         creator = new MD5DownloadTaskIDCreator();
