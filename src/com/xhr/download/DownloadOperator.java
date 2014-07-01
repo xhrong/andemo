@@ -78,6 +78,9 @@ public class DownloadOperator implements Runnable {
                     conn.disconnect();
                     conn = initConnection(false);
                     conn.connect();
+                    //从头开始下载
+                    task.setDownloadTotalSize(0);
+                    task.setDownloadFinishedSize(0);
                 }
 
                 task.setDownloadSavePath(filePath);
@@ -175,7 +178,7 @@ public class DownloadOperator implements Runnable {
         HttpURLConnection conn = (HttpURLConnection) new URL(task.getUrl()).openConnection();
         conn.setConnectTimeout(30000);
         conn.setReadTimeout(30000);
-        conn.setUseCaches(true);
+    //    conn.setUseCaches(true);
         if (support) {
             Log.i("Range", "" + task.getDownloadFinishedSize());
             conn.setRequestProperty("Range", "bytes=" + task.getDownloadFinishedSize() + "-");
