@@ -15,15 +15,15 @@ public class DownloadTask {
     public static final String TOTALSIZE = "e";
     public static final String NAME = "f";
     public static final String STATUS = "g";
-    public static final String  CUSTOMPARAM="f";
+    public static final String CUSTOMPARAM = "f";
 
-    public static final int STATUS_PENDDING = 1 << 0;
-    public static final int STATUS_RUNNING = 1 << 1;
-    public static final int STATUS_PAUSED = 1 << 2;
-    public static final int STATUS_CANCELED = 1 << 3;
-    public static final int STATUS_FINISHED = 1 << 4;
-    public static final int STATUS_ERROR = 1 << 5;
-    public static final int STATUS_RESTART = 1 << 6;
+    public static final int STATUS_PENDDING = 1;
+    public static final int STATUS_RUNNING = 2;
+    public static final int STATUS_PAUSED = 4;
+    public static final int STATUS_CANCELED = 8;
+    public static final int STATUS_FINISHED = 16;
+    public static final int STATUS_ERROR = 32;
+    //  public static final int STATUS_RESTART = 1 << 6;
 
     private String id;
     private String name;

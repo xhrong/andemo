@@ -17,6 +17,8 @@ import java.net.URL;
  */
 public class DownloadOperator implements Runnable {
 
+    private static final String TAG="DownloadOperator";
+
     // 100 kb
     private static final long REFRESH_INTEVAL_SIZE = 100 * 1024;
 
@@ -68,9 +70,15 @@ public class DownloadOperator implements Runnable {
             InputStream is = null;
             try {
                 raf = buildDownloadFile();
-                conn = initConnection();
-
+                conn = initConnection(true);
                 conn.connect();
+                String acceptRange = conn.getHeaderField("Accept-Ranges");
+                if (acceptRange == null || acceptRange.equals("none")) {//不支持断点续传，需要重新处理
+                    Log.i(TAG,task.getName()+"不支持断点续传");
+                    conn.disconnect();
+                    conn = initConnection(false);
+                    conn.connect();
+                }
 
                 task.setDownloadSavePath(filePath);
                 if (task.getDownloadTotalSize() == 0) {
@@ -132,6 +140,7 @@ public class DownloadOperator implements Runnable {
                     break;
                 } else {
                     tryTimes++;
+                    manager.onDownloadRetry(task);
                     continue;
                 }
             }
@@ -162,12 +171,12 @@ public class DownloadOperator implements Runnable {
         return raf;
     }
 
-    private HttpURLConnection initConnection() throws IOException {
+    private HttpURLConnection initConnection(boolean support) throws IOException {
         HttpURLConnection conn = (HttpURLConnection) new URL(task.getUrl()).openConnection();
         conn.setConnectTimeout(30000);
         conn.setReadTimeout(30000);
         conn.setUseCaches(true);
-        if (task.getDownloadFinishedSize() != 0) {
+        if (support) {
             Log.i("Range", "" + task.getDownloadFinishedSize());
             conn.setRequestProperty("Range", "bytes=" + task.getDownloadFinishedSize() + "-");
         }

@@ -91,14 +91,14 @@ public class DownloadTaskAdapter extends ArrayAdapter<DownloadTask> {
             @Override
             public void onClick(View view) {
                 DownloadTask ddtask = (DownloadTask) holder.text.getTag();
-                DownloadManager.getInstance().pauseDownload(ddtask);
+                DownloadManager.getInstance().pauseDownload(ddtask.getId());
             }
         });
         holder.resumeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 DownloadTask ddtask = (DownloadTask) holder.text.getTag();
-                DownloadManager.getInstance().resumeDownload(ddtask);
+                DownloadManager.getInstance().resumeDownload(ddtask.getId());
             }
         });
 
@@ -121,8 +121,11 @@ public class DownloadTaskAdapter extends ArrayAdapter<DownloadTask> {
 
                     @Override
                     public void onDownloadUpdated(DownloadTask task, long finishedSize, long trafficSpeed) {
+                     //   Log.i("DonwloadTaskAdapter","finishsize"+finishedSize);
                         holder.text.setText(task.getName() + finishedSize);
+                        Log.i("DownloadTaskAdapter",holder.text.getText().toString());
                         holder.pBar.setProgress((int) (finishedSize * 100 / task.getDownloadTotalSize()));
+
                     }
 
                     @Override

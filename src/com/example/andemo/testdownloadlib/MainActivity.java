@@ -2,6 +2,7 @@ package com.example.andemo.testdownloadlib;
 
 import android.app.ListActivity;
 import android.os.Bundle;
+import android.widget.Button;
 import com.example.andemo.R;
 import com.xhr.download.DownloadListener;
 import com.xhr.download.DownloadTask;
@@ -21,4 +22,10 @@ public class MainActivity extends ListActivity{
                 SourceProvicer.getTaskList());
         setListAdapter(adapter);
     }
+
+    protected  void onStop(){
+        System.exit(0);
+    }
+
+
 }
