@@ -84,14 +84,10 @@ public class SqlLiteDownloadProvider implements DownloadProvider {
     public void updateDownloadTask(DownloadTask task) {
         ContentValues values = createDownloadTaskValues(task);
         db.update(DOWNLOAD_TABLE, values, DownloadTask.ID + "=?", new String[]{task.getId()});
-        //     printDb();
         notifyDownloadStatusChanged(task);
     }
 
-//    public void deleteDownloadTask(DownloadTask task) {
-//        db.delete(DOWNLOAD_TABLE, DownloadTask.ID + "=?", new String[]{task.getId()});
-//        notifyDownloadStatusChanged(task);
-//    }
+
 
     public DownloadTask findDownloadTaskById(String id) {
         if (TextUtils.isEmpty(id)) {
@@ -119,7 +115,7 @@ public class SqlLiteDownloadProvider implements DownloadProvider {
     }
 
     public void notifyDownloadStatusChanged(DownloadTask task) {
-        manager.notifyDownloadTaskStatusChanged(task);
+       // manager.notifyDownloadTaskStatusChanged(task);
     }
 
 

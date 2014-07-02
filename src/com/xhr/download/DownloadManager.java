@@ -27,7 +27,7 @@ public class DownloadManager {
     private HashMap<String, DownloadTask> downloadTasks = new HashMap<String, DownloadTask>();
     private HashMap<String, DownloadOperator> taskOperators = new HashMap<String, DownloadOperator>();
     private HashMap<String, DownloadListener> taskListeners = new HashMap<String, DownloadListener>();
-    private LinkedList<DownloadObserver> taskObservers = new LinkedList<DownloadObserver>();
+   // private LinkedList<DownloadObserver> taskObservers = new LinkedList<DownloadObserver>();
 
     private DownloadProvider provider;
 
@@ -99,7 +99,9 @@ public class DownloadManager {
         if (historyTask == null) {
             provider.saveDownloadTask(task);
         } else {
-            if (historyTask.getStatus() == DownloadTask.STATUS_FINISHED || historyTask.getStatus()==DownloadTask.STATUS_ERROR || historyTask.getDownloadTotalSize()<=historyTask.getDownloadFinishedSize()) {//如果该任务已经完成了，则重新下载
+            if (historyTask.getStatus() == DownloadTask.STATUS_FINISHED
+                    || historyTask.getStatus()==DownloadTask.STATUS_ERROR
+                    || historyTask.getDownloadTotalSize()<=historyTask.getDownloadFinishedSize()) {//如果该任务已经完成了，则重新下载
                 task.setDownloadFinishedSize(0);
                 task.setDownloadTotalSize(0);
             } else {//否则，继续之后的位置下载
@@ -212,34 +214,34 @@ public class DownloadManager {
         return provider.getAllDownloadTask();
     }
 
-    public void registerDownloadObserver(DownloadObserver observer) {
-        if (observer == null) {
-            return;
-        }
-        taskObservers.add(observer);
-    }
-
-    public void unregisterDownloadObserver(DownloadObserver observer) {
-        if (observer == null) {
-            return;
-        }
-        taskObservers.remove(observer);
-    }
+//    public void registerDownloadObserver(DownloadObserver observer) {
+//        if (observer == null) {
+//            return;
+//        }
+//        taskObservers.add(observer);
+//    }
+//
+//    public void unregisterDownloadObserver(DownloadObserver observer) {
+//        if (observer == null) {
+//            return;
+//        }
+//        taskObservers.remove(observer);
+//    }
 
     public void close() {
         pool.shutdownNow();
     }
 
-    public void notifyDownloadTaskStatusChanged(final DownloadTask task) {
-        handler.post(new Runnable() {
-
-            public void run() {
-                for (DownloadObserver observer : taskObservers) {
-                    observer.onDownloadTaskStatusChanged(task);
-                }
-            }
-        });
-    }
+//    public void notifyDownloadTaskStatusChanged(final DownloadTask task) {
+//        handler.post(new Runnable() {
+//
+//            public void run() {
+//                for (DownloadObserver observer : taskObservers) {
+//                    observer.onDownloadTaskStatusChanged(task);
+//                }
+//            }
+//        });
+//    }
 
     /**
      * 更新任务状态

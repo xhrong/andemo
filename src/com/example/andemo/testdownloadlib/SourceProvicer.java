@@ -36,7 +36,7 @@ public class SourceProvicer {
         ddList.add(task3);
         DownloadTask task4 = new DownloadTask();
         task4.setName("MTBK");
-        task4.setUrl("http://download.cycore.cn/7/files/7581145211124ff286bd2814e8840cd1.mtbk");
+        task4.setUrl("http://download.cycore.cn/3/files/35501ba4b8c841158f266946754bc4bb.mtbk");
         task4.setDownloadSavePath("/mnt/sdcard/");
         task4.setId(DownloadManager.getInstance().getConfig().getCreator().createId(task4));
         ddList.add(task4);

@@ -22,10 +22,4 @@ public class MainActivity extends ListActivity{
                 SourceProvicer.getTaskList());
         setListAdapter(adapter);
     }
-
-    protected  void onStop(){
-        System.exit(0);
-    }
-
-
 }
